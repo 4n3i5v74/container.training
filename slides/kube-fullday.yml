@@ -86,6 +86,7 @@ content:
   #- k8s/create-more-charts.md
   #- k8s/netpol.md
   #- k8s/authn-authz.md
+  #- k8s/user-cert.md
   #- k8s/csr-api.md
   #- k8s/openid-connect.md
   #- k8s/podsecuritypolicy.md
@@ -100,10 +101,12 @@ content:
   #- k8s/local-persistent-volumes.md
   #- k8s/portworx.md
   #- k8s/extending-api.md
+  #- k8s/crd.md
   #- k8s/admission.md
   #- k8s/operators.md
   #- k8s/operators-design.md
   #- k8s/staticpods.md
+  #- k8s/finalizers.md
   #- k8s/owners-and-dependents.md
   #- k8s/gitworkflows.md
 -

@@ -245,6 +245,12 @@ _cmd_kube() {
     if i_am_first_node; then
 	kubectl apply -f https://raw.githubusercontent.com/jpetazzo/container.training/master/k8s/metrics-server.yaml
     fi"
+}
+
+_cmd kubetools "Install a bunch of CLI tools for Kubernetes"
+_cmd_kubetools() {
+    TAG=$1
+    need_tag
 
     # Install kubectx and kubens
     pssh "
@@ -313,7 +319,7 @@ EOF"
         curl -fsSL https://github.com/kubernetes-sigs/krew/releases/latest/download/krew.tar.gz |
         tar -zxf- &&
         sudo -u docker -H ./krew-linux_amd64 install krew &&
-        echo export PATH=\"/home/docker/.krew/bin:\$PATH\" | sudo -u docker tee -a /home/docker/.bashrc
+        echo export PATH=/home/docker/.krew/bin:\\\$PATH | sudo -u docker tee -a /home/docker/.bashrc
     fi"
 
     # Install k9s and popeye
@@ -329,7 +335,31 @@ EOF"
         sudo tar -zxvf- -C /usr/local/bin popeye
     fi"
 
-    sep "Done"
+    # Install Tilt
+    pssh "
+    if [ ! -x /usr/local/bin/tilt ]; then
+        curl -fsSL https://raw.githubusercontent.com/tilt-dev/tilt/master/scripts/install.sh | bash
+    fi"
+
+    # Install Skaffold
+    pssh "
+    if [ ! -x /usr/local/bin/skaffold ]; then
+        curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64 &&
+        sudo install skaffold /usr/local/bin/
+    fi"
+
+    # Install Kompose
+    pssh "
+    if [ ! -x /usr/local/bin/kompose ]; then
+        curl -Lo kompose https://github.com/kubernetes/kompose/releases/latest/download/kompose-linux-amd64 &&
+        sudo install kompose /usr/local/bin
+    fi"
+
+    pssh "
+    if [ ! -x /usr/local/bin/kubeseal ]; then
+        curl -Lo kubeseal https://github.com/bitnami-labs/sealed-secrets/releases/download/v0.13.1/kubeseal-linux-amd64 &&
+        sudo install kubeseal /usr/local/bin
+    fi"
 }
 
 _cmd kubereset "Wipe out Kubernetes configuration on all nodes"
@@ -691,8 +721,8 @@ _cmd_helmprom() {
     need_tag
     pssh "
     if i_am_first_node; then
-        sudo -u docker -H helm repo add stable https://kubernetes-charts.storage.googleapis.com/
-        sudo -u docker -H helm install prometheus stable/prometheus \
+        sudo -u docker -H helm helm repo add prometheus-community https://prometheus-community.github.io/helm-charts/
+        sudo -u docker -H helm install prometheus prometheus-community/prometheus \
             --namespace kube-system \
             --set server.service.type=NodePort \
             --set server.service.nodePort=30090 \

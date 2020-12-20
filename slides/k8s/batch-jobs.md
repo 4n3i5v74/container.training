@@ -10,7 +10,7 @@
 
 - Jobs are great for "long" background work
 
-  ("long" being at least minutes our hours)
+  ("long" being at least minutes or hours)
 
 - CronJobs are great to schedule Jobs at regular intervals
 
@@ -143,6 +143,28 @@ class: extra-details
 ]
 
 (It will take a few minutes before the first job is scheduled.)
+
+---
+
+class: extra-details
+
+## Setting a time limit
+
+- It is possible to set a time limit (or deadline) for a job
+
+- This is done with the field `spec.activeDeadlineSeconds`
+
+  (by default, it is unlimited)
+
+- When the job is older than this time limit, all its pods are terminated
+
+- Note that there can also be a `spec.activeDeadlineSeconds` field in pods!
+
+- They can be set independently, and have different effects:
+
+  - the deadline of the job will stop the entire job
+
+  - the deadline of the pod will only stop an individual pod
 
 ---
 
